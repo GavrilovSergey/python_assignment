@@ -1,0 +1,1 @@
+docker exec ctw-backend /bin/bash -c "cd ..; python get_raw_data.py"

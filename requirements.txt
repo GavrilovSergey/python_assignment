@@ -1,0 +1,6 @@
+fastapi[all]
+psycopg2
+SQLAlchemy == 1.4.37
+python-dotenv
+httpx
+python-dateutil

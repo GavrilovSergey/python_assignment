@@ -1,0 +1,47 @@
+version: '3.5'
+services:
+
+  ctw-backend:
+    build: .
+    container_name: ctw-backend
+    tty: true
+    ports:
+      - "5000:8888"
+    volumes: 
+      - ./financial/app:/financial/app
+    environment:
+      SQLALCHEMY_DATABASE_URL: "postgresql://ctwuser:ctwpass@ctw-postgres/ctw"
+      ALPHAVANTAGE_API_KEY: "IZMXHIJBYAKP4BTJ"
+    depends_on:
+      ctw-postgres:
+        condition: service_healthy
+    networks:
+      - ctw-network
+
+  ctw-postgres:
+    image: postgres:15.2
+    container_name: ctw-postgres
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d ctw -U ctwuser"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    environment:
+      POSTGRES_USER: ctwuser
+      POSTGRES_DB: ctw
+      POSTGRES_PASSWORD: ctwpass
+    ports:
+      - "5432:5432"
+    volumes: 
+      - ./db/data:/var/lib/postgresql/data
+    networks:
+      - ctw-network
+
+volumes:
+  db:
+    driver: local
+    
+networks:
+  ctw-network:
+    driver: bridge
